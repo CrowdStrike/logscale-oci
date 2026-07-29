@@ -1,0 +1,65 @@
+# Primary Cluster Configuration (DR Active)
+#
+# Usage:
+#   cp primary.tfvars.example primary.tfvars
+#   # Edit all placeholder values below
+#   terraform workspace new primary
+#   terraform init -backend-config=backend-configs/primary-oci.hcl
+#   terraform apply -var-file=primary.tfvars
+#
+# For advanced options (networking, component versions, tags, etc.)
+# see example.tfvars — add any overrides to your primary.tfvars.
+
+# --- OCI Authentication (required) ---
+tenancy_ocid     = "ocid1.tenancy.oc1..example"
+root_tenancy_ocid = "ocid1.tenancy.oc1..example"
+compartment_ocid = "ocid1.compartment.oc1..example"
+region           = "us-chicago-1"
+user_ocid        = "ocid1.user.oc1..example"
+user_fingerprint = "aa:bb:cc:dd:ee:ff:00:11:22:33:44:55:66:77:88:99"
+private_key_path = "~/.oci/oci_api_key.pem"
+
+# --- SSH Keys (required) ---
+ssh_public_key_path  = "~/.ssh/id_rsa.pub"
+ssh_private_key_path = "~/.ssh/id_rsa"
+
+# --- Workspace & DR Role ---
+workspace_name = "primary"
+dr             = "active"
+
+# --- Cluster (required) ---
+cluster_name       = "dr-primary"
+worker_image_id    = "ocid1.image.oc1.<region>.example"
+logscale_public_fqdn = "logscale-dr.example.com"
+logscale_license   = "REPLACE_WITH_YOUR_LOGSCALE_LICENSE"
+cert_issuer_email  = "admin@example.com"
+
+# --- Global DNS (primary manages DNS steering policy) ---
+manage_global_dns           = true
+create_global_dns_zone      = true
+dns_zone_name               = "example.com"
+global_logscale_hostname    = "logscale-dr"
+primary_logscale_hostname   = "logscale-primary"
+secondary_logscale_hostname = "logscale-secondary"
+
+# --- Security Allowlists ---
+bastion_client_allow_list   = ["YOUR.PUBLIC.IP.ADDRESS/32"]
+control_plane_allowed_cidrs = ["YOUR.PUBLIC.IP.ADDRESS/32"]
+public_lb_cidrs             = ["YOUR.PUBLIC.IP.ADDRESS/32"]
+
+# --- Remote State (uncomment when secondary exists) ---
+# secondary_remote_state_config = {
+#   backend   = "oci"
+#   workspace = "secondary"
+#   config = {
+#     bucket              = "your-terraform-state-bucket"
+#     namespace           = "your-namespace"
+#     region              = "us-chicago-1"
+#     key                 = "env:/logscale-oci-oke"
+#     auth                = "ApiKey"
+#     config_file_profile = "DEFAULT"
+#   }
+# }
+
+# --- DR Failover Function (disabled on primary) ---
+dr_failover_function_enabled = false

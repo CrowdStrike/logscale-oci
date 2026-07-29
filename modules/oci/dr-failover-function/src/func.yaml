@@ -1,0 +1,6 @@
+name: logscale-dr-failover-handler
+version: 0.0.1
+runtime: python
+entrypoint: /python/bin/fdk /function/func.py handler
+memory: 256
+timeout: 300

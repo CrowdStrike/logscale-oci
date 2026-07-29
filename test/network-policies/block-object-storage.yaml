@@ -1,0 +1,45 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: block-object-storage
+  namespace: logging
+  labels:
+    dr-test: "true"
+    scenario: "storage-failure"
+spec:
+  podSelector:
+    matchLabels:
+      app.kubernetes.io/name: humio
+  policyTypes:
+  - Egress
+  egress:
+  # Allow DNS resolution
+  - to:
+    - namespaceSelector: {}
+    ports:
+    - protocol: UDP
+      port: 53
+    - protocol: TCP
+      port: 53
+  # Allow Kafka (internal cluster communication)
+  - to:
+    - podSelector:
+        matchLabels:
+          strimzi.io/kind: Kafka
+  # Allow communication within the logging namespace
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: logging
+  # Allow Kubernetes API and internal cluster communication
+  - to:
+    - ipBlock:
+        cidr: 10.0.0.0/8
+  # Allow communication with kube-system (for services, etc.)
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          kubernetes.io/metadata.name: kube-system
+  # NOTE: By NOT including OCI Object Storage endpoints (objectstorage.<region>.oraclecloud.com),
+  # all traffic to Object Storage is implicitly blocked.
+  # This will cause LogScale segment upload failures.
