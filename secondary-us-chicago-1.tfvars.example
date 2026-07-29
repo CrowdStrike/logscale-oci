@@ -1,0 +1,166 @@
+# Secondary Cluster Configuration Example (DR Standby Mode)
+#
+# Copy this file to create your actual configuration:
+#   cp secondary-us-chicago-1.tfvars.example secondary-us-chicago-1.tfvars
+#
+# Then customize all placeholder values (marked with XXXXXXXX or REPLACE_WITH).
+#
+# Prerequisites:
+#   - Primary cluster must be deployed first
+#   - Primary must expose outputs via remote state
+#
+# Initialize:
+#   terraform workspace new secondary
+#   terraform init -backend-config=backend-configs/secondary-oci.hcl
+#   terraform apply -var-file=secondary-us-chicago-1.tfvars
+
+# =============================================================================
+# Required: OCI Authentication
+# =============================================================================
+tenancy_ocid     = "ocid1.tenancy.oc1..aaaaaaaaXXXXXXXXXXXX"
+compartment_ocid = "ocid1.compartment.oc1..aaaaaaaaXXXXXXXXXXXX"
+user_ocid        = "ocid1.user.oc1..aaaaaaaaXXXXXXXXXXXX"
+user_fingerprint = "XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX:XX"
+private_key_path = "~/.oci/oci_api_key.pem"
+
+# =============================================================================
+# Required: SSH Keys for Node Access
+# =============================================================================
+ssh_public_key_path  = "~/.ssh/id_rsa.pub"
+ssh_private_key_path = "~/.ssh/id_rsa"
+
+# =============================================================================
+# Required: Workspace & DR Configuration
+# =============================================================================
+# Must match the Terraform workspace name exactly (validation.tf enforces this).
+workspace_name = "secondary"
+
+# DR mode: "active" for primary cluster, "standby" for secondary, "" for non-DR
+dr = "standby"
+
+# =============================================================================
+# Required: Cluster Configuration
+# =============================================================================
+cluster_name           = "dr-secondary"
+region                 = "us-chicago-1"
+kubernetes_version     = "v1.28.0"
+logscale_cluster_type  = "advanced"  # Options: basic, dedicated-ui, advanced
+logscale_cluster_size  = "small"     # Options: xsmall, small, medium, large, xlarge
+logscale_image_version = "latest"
+logscale_public_fqdn   = "logscale-dr.example.com"
+logscale_license       = "REPLACE_WITH_YOUR_LOGSCALE_LICENSE"
+
+# =============================================================================
+# Required: Worker Node Image (Oracle Linux 8)
+# Update this OCID for your specific region
+# =============================================================================
+worker_image_id = "ocid1.image.oc1.<region>.aaaaaaaaXXXXXXXXXXXX"
+
+# =============================================================================
+# Required: Bastion Configuration
+# =============================================================================
+provision_bastion = true
+
+# =============================================================================
+# Global DNS Configuration (Standby does NOT manage DNS)
+# =============================================================================
+manage_global_dns      = false
+create_global_dns_zone = false
+
+# =============================================================================
+# Required: Remote State for Primary
+# This reads encryption key and bucket info from primary workspace
+# =============================================================================
+primary_remote_state_config = {
+  backend   = "oci"
+  workspace = "primary"
+  config = {
+    bucket              = "your-terraform-state-bucket"
+    namespace           = "your-namespace"
+    region              = "us-chicago-1"
+    key                 = "env:/logscale-oci-oke"
+    auth                = "ApiKey"
+    config_file_profile = "DEFAULT"
+  }
+}
+
+# =============================================================================
+# DR Recovery Configuration
+# S3_RECOVER_FROM_* env vars for reading primary bucket
+# =============================================================================
+s3_recover_from_region         = "us-chicago-1"
+s3_recover_from_replace_region = "us-chicago-1/us-chicago-1"
+# s3_recover_from_bucket / s3_recover_from_endpoint_base / s3_recover_from_replace_bucket
+# are inferred from primary remote state; override only for bootstrap/debug.
+
+# =============================================================================
+# Security Allowlists - REPLACE WITH YOUR ACTUAL IPs
+# NEVER use 0.0.0.0/0 in production!
+# =============================================================================
+bastion_client_allow_list = [
+  "YOUR.PUBLIC.IP.ADDRESS/32",  # Replace with your public IP
+  "YOUR.OFFICE.IP.RANGE/24"     # Replace with your office IP range
+]
+
+control_plane_allowed_cidrs = [
+  "YOUR.PUBLIC.IP.ADDRESS/32",  # Replace with your public IP
+  "YOUR.OFFICE.IP.RANGE/24"     # Replace with your office IP range
+]
+
+public_lb_cidrs = [
+  "YOUR.PUBLIC.IP.ADDRESS/32",  # Replace with your public IP
+  "YOUR.OFFICE.IP.RANGE/24"     # Replace with your office IP range
+]
+
+# =============================================================================
+# Optional: DNS-01 Challenge Configuration for cert-manager
+# =============================================================================
+# Enable DNS-01 challenge for Let's Encrypt certificates
+# This allows cert-manager to use OCI DNS for domain validation
+enable_dns01_challenge = true
+
+# ClusterIssuer name for cert-manager (defaults to "letsencrypt-prod")
+# cluster_issuer_name = "letsencrypt-prod"
+
+# Let's Encrypt server (production or staging)
+# Production: "https://acme-v02.api.letsencrypt.org/directory"
+# Staging: "https://acme-staging-v02.api.letsencrypt.org/directory"
+# letsencrypt_server = "https://acme-v02.api.letsencrypt.org/directory"
+
+# =============================================================================
+# Optional: Additional Configuration
+# =============================================================================
+# OCI Home Region (defaults to us-phoenix-1 if not specified)
+# home_region = "us-phoenix-1"
+
+# Kubernetes API Host for tunnel access (defaults to https://localhost:6443)
+# Only needed when using bastion tunnel mode
+# kubernetes_api_host = "https://localhost:6443"
+
+# OCI CLI Config Profile
+config_file_profile = "DEFAULT"
+
+# Resource Naming
+resource_name_prefix = "log"
+
+# Storage Configuration
+target_replication_factor = 2
+par_expiration_time       = "2026-12-31T23:59:59Z"
+
+# API Endpoint Access
+endpoint_public_access = false
+
+# =============================================================================
+# Required: DR Failover Function (Enabled on standby only)
+# Automates scaling operator when primary fails
+# =============================================================================
+dr_failover_function_enabled             = true
+dr_failover_function_target_node_count   = 1
+dr_failover_function_timeout             = 300
+dr_failover_function_memory_mb           = 256
+# Required: 30, 60, 90, 120, 150, or 180 days (OCI API requirement)
+dr_failover_function_log_retention_days  = 30
+dr_failover_function_skip_secondary_health_check = false
+dr_primary_health_check_id               = ""
+dr_secondary_health_check_id             = ""
+function_subnet_ids = []
