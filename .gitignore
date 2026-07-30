@@ -1,0 +1,44 @@
+# Python
+__pycache__/
+*.pyc
+
+# Terraform
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+*.tfplan
+tfplan*
+crash.log
+override.tf
+override.tf.json
+*_override.tf
+*_override.tf.json
+
+# Terraform variables (environment-specific)
+*.tfvars
+!example.tfvars
+
+
+# Kubeconfig files
+kubeconfig*.yaml
+*kubeconfig*.yaml
+
+# Local tooling (do not commit)
+.tools/
+logs/
+*.log
+*.zip
+
+# Claude Code
+CLAUDE.md
+.claude/
+
+# DR documentation (generated/maintained locally)
+network_connectivity.md
+DR_FAILOVER_REVIEW.md
+OCI_NETWORK_SECURITY.md
+test/DR_FAILOVER_SIMULATION_HOWTO.md
+docs/
+*.drawio
+*.png
