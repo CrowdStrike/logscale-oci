@@ -1,7 +1,7 @@
 ![CrowdStrike Falcon](https://raw.githubusercontent.com/CrowdStrike/falconpy/main/docs/asset/cs-logo.png)
 
 # Security
-This document outlines security policy and procedures for the CrowdStrike Logscale Azure v2 project.
+This document outlines security policy and procedures for the CrowdStrike LogScale OCI project.
 + [Supported versions](#supported-versions)
 + [Reporting a potential security vulnerability](#reporting-a-potential-security-vulnerability)
 + [Disclosure and Mitigation Process](#disclosure-and-mitigation-process)
@@ -13,9 +13,9 @@ When discovered, we release security vulnerability patches for the most recent r
 We have multiple avenues to receive security-related vulnerability reports.
 
 Please report suspected security vulnerabilities by:
-+ Submitting a [bug](https://github.com/CrowdStrike/logscale-azure-v2/issues)
-+ Submitting a [pull request](https://github.com/CrowdStrike/logscale-azure-v2/pulls) to potentially resolve the issue
-+ Sending an email to  oss-security@crowdstrike.com
++ Submitting a [bug](https://github.com/CrowdStrike/logscale-oci/issues)
++ Submitting a [pull request](https://github.com/CrowdStrike/logscale-oci/pulls) to potentially resolve the issue
++ Sending an email to oss-security@crowdstrike.com
 
 ## Disclosure and mitigation process
 Upon receiving a security bug report, the issue will be assigned to one of the project maintainers. This person
@@ -28,8 +28,6 @@ will coordinate the related fix and release process, involving the following ste
 + Preparation of patches for all releases still under maintenance.
   - These patches will be submitted as a separate pull request and contain a version update.
   - This pull request will be flagged as a security fix.
-  - Once merged, and after post-merge unit testing has been completed, the patch will be immediately published to
-    the Powershell marketplace.
 
 ## Comments
-If you have suggestions on how this process could be improved, please let us know by [creating an issue](https://github.com/CrowdStrike/logscale-azure-v2/issues).
+If you have suggestions on how this process could be improved, please let us know by [creating an issue](https://github.com/CrowdStrike/logscale-oci/issues).
