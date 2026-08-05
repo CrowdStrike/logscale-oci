@@ -481,7 +481,7 @@ discover_kube_context_for_cluster() {
     #   Exit code 0 on success, 1 on failure
     #
     # Example:
-    #   cluster_ocid="ocid1.cluster.oc1.us-chicago-1.aaaaaaaajeqldc3j73frfli6socrkma3g4epabi7z27s73i2ecvwxa22lm2q"
+    #   cluster_ocid="ocid1.cluster.oc1.us-chicago-1.aaaaaaaexampleexampleexampleexampleexample"
     #   context=$(discover_kube_context_for_cluster "$cluster_ocid")
     #   # Returns: "context-cvwxa22lm2q" or "oci-single" (depending on kubeconfig)
 

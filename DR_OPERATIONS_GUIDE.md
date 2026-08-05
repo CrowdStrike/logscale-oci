@@ -599,7 +599,7 @@ secondary_remote_state_config = {
 # Check that secondary IP is dynamically discovered
 terraform workspace select primary
 terraform output secondary_ingest_lb_ip
-# Should show the secondary cluster's LB IP (e.g., 163.192.105.34)
+# Should show the secondary cluster's LB IP (e.g., 198.51.100.34)
 ```
 
 ### 4.4 Module Deployment Matrix
@@ -969,7 +969,7 @@ OCI LogScale deployments use AWS S3-compatible environment variables for DR reco
 | --- | --- | --- | --- |
 | `S3_RECOVER_FROM_BUCKET` | Source bucket name where LogScale fetches `global-snapshot.json` during DR boot | `bucket-name` | `dr-primary-logscale-data` |
 | `S3_RECOVER_FROM_REGION` | Region of the source bucket; used to construct the S3 API endpoint | `region-name` | `us-chicago-1` |
-| `S3_RECOVER_FROM_ENDPOINT_BASE` | S3-compatible API base URL; required for OCI since it uses non-AWS endpoints | `https://<endpoint>` | `https://axrgs2jgwnhx.compat.objectstorage.us-chicago-1.oraclecloud.com` |
+| `S3_RECOVER_FROM_ENDPOINT_BASE` | S3-compatible API base URL; required for OCI since it uses non-AWS endpoints | `https://<endpoint>` | `https://<namespace>.compat.objectstorage.us-chicago-1.oraclecloud.com` |
 | `S3_RECOVER_FROM_REPLACE_REGION` | Substitution pattern to rewrite region references in recovered snapshot metadata | `old/new` | `us-chicago-1/us-chicago-1` |
 | `S3_RECOVER_FROM_REPLACE_BUCKET` | Substitution pattern to redirect new segment writes to secondary bucket | `old/new` | `dr-primary-logscale-data/dr-secondary-logscale-data` |
 | `S3_RECOVER_FROM_ENCRYPTION_KEY` | Secret reference for decryption key; must match primary's key to read encrypted data | secretKeyRef | See below |
@@ -1630,7 +1630,7 @@ kubectl get humiocluster -n logging -o jsonpath='{.items[0].status.licenseStatus
 
 * **Deployment Guide**: [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) -- Standalone cluster deployment
 
-**Internal CrowdStrike Documentation:**
+**Additional Documentation:**
 
 * **LogScale Cluster Management - Storage Bucket**: [LogScale Library](https://library.humio.com/deployment/cluster-management-storage-bucket.html#cluster-management-storage-bucket-start-another-cluster)
 

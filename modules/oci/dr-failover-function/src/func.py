@@ -1121,7 +1121,7 @@ def _generate_oke_token(signer, cluster_id: str) -> str:
         from datetime import datetime, timezone
 
         # Extract region from cluster_id (format: ocid1.cluster.oc1.<region>.<unique_id>)
-        # Example: ocid1.cluster.oc1.us-chicago-1.aaaaaaaaeyxiefvxvbmd74oepampefjndyteukdmcvga6clsncqfx6aom4ha
+        # Example: ocid1.cluster.oc1.us-chicago-1.aaaaaaaexampleexampleexampleexampleexample
         parts = cluster_id.split('.')
         if len(parts) >= 4:
             region = parts[3]

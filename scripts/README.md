@@ -77,7 +77,7 @@ You can safely stop it with `Ctrl+C`; bastion resources are cleaned up automatic
 - **Workspace** selection via `--workspace <name>` (uses `terraform workspace select`).
 - **tfvars fallbacks** via `--tfvars <file>` (or `--tfvars=file`) when Terraform outputs are missing:
   - Reads `compartment_ocid`/`compartment_id`, `region`, `config_file_profile` (OCI profile), and `ssh_public_key_path` from the tfvars file.
-  - Falls back to `terraform.tfvars` or `rafael.tfvars` automatically if `--tfvars` is not provided and those files exist.
+  - Falls back to `terraform.tfvars` automatically if `--tfvars` is not provided and the file exists.
   - Defaults `OCI_PROFILE` to `DEFAULT` if no profile is found.
 - **Session/tunnel watchdogs** that:
   - Restart tunnels if the SSH process dies.
@@ -102,7 +102,7 @@ From the repository root:
 With explicit workspace and tfvars:
 
 ```bash
-./scripts/setup-bastion-tunnel-v2.sh --workspace prod --tfvars rafael.tfvars both
+./scripts/setup-bastion-tunnel-v2.sh --workspace prod --tfvars my-cluster.tfvars both
 ```
 
 ### Additional Environment Variables
@@ -120,7 +120,7 @@ Example:
 ```bash
 SESSION_DURATION=7200 REFRESH_MARGIN=600 WATCH_INTERVAL=60 \
   INITIAL_RETRY_ATTEMPTS=5 INITIAL_RETRY_DELAY=15 \
-  ./scripts/setup-bastion-tunnel-v2.sh --workspace prod --tfvars rafael.tfvars both
+  ./scripts/setup-bastion-tunnel-v2.sh --workspace prod --tfvars my-cluster.tfvars both
 ```
 
 ### Cleanup
